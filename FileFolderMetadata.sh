@@ -1,5 +1,5 @@
 #!/bin/bash
-#comment
+
 function usage () {
         echo
         echo "Usage: ./FileFolderMetadata.sh -o [Option] -f [\"Folder Name\"] -s [\"Syncpoint Name\"]"
