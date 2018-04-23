@@ -40,9 +40,9 @@ do
         esac
 done
 
-appkey=$(grep 'App Key' DemoAccount | cut -d : -f2 | tr -d ' ')
-appsecret=$(grep 'App Secret' DemoAccount | cut -d : -f2 | tr -d ' ')
-usersyncapptoken=$(grep 'Application Token' DemoAccount | cut -d : -f2 | tr -d ' ')
+appkey=$(grep 'App Key' /root/DemoAccount | cut -d : -f2 | tr -d ' ')
+appsecret=$(grep 'App Secret' /root/DemoAccount | cut -d : -f2 | tr -d ' ')
+usersyncapptoken=$(grep 'Application Token' /root/DemoAccount | cut -d : -f2 | tr -d ' ')
 oauthbasic=$(echo -n "${appkey}:${appsecret}" | base64)
 
 oauthresult=$(curl -sS -X POST https://api.syncplicity.com/oauth/token -H 'Authorization: Basic '${oauthbasic} -H "Sync-App-Token: ${usersyncapptoken}" -d 'grant_type=client_credentials')
@@ -127,6 +127,11 @@ GetFileVersions ()
   curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/versions.svc/$(GetSyncpointID)/file/$FILE_VERSION_ID/versions" | python -m json.tool
 }
 
+GetStorageEndpoints ()
+{
+  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" "https://api.syncplicity.com/storage/storageendpoints.svc/" | python -m json.tool
+}
+
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
 
 if [[ $OPTION = 'get-syncpoints' ]]; then
@@ -147,6 +152,8 @@ elif [[ $OPTION = 'get-default-storage' ]]; then
   GetDefaultStorage
 elif [[ $OPTION = 'get-file-versions' ]]; then
   GetFileVersions
+elif [[ $OPTION = 'get-storage-endpoints' ]]; then
+  GetStorageEndpoints
 else
   usage
 fi
