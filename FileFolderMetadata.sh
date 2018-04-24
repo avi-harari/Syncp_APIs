@@ -17,12 +17,14 @@ function usage () {
         echo "get-storage-endpoint - Get a certain storage endpoint. Requires storage endpoint description (-b)."
         echo "get-storage-endpoints - Get all storage endpoints."
         echo "get-file-versions - Get all versions of a file. Requires existing filename (-e), syncpoint and folder name."
+        echo "delete-file-version - Delete a certain version of a file."
         echo
         echo "-f - Folder name. If folder name has spaces it must be inside double quotes."
         echo "-s - Syncpoint name. If syncpoint name has spaces it must be inside double quotes."
         echo "-n - New folder name. If folder name has spaces it must be inside double quotes. Only used with create-folder option."
         echo "-e - Existing Filename."
         echo "-b - Storage Endpoint Description. Only used for get-storage-endpoint."
+        echo "-v - File version. 0 is first version. Only used for delete-file-version."
         echo
         echo "Examples:"
         echo "./FileFolderMetadata.sh -o get-syncpoints"
@@ -32,7 +34,7 @@ function usage () {
 
 }
 
-while getopts "o:u:f:s:n:e:v:h" opt
+while getopts "o:u:f:s:n:e:b:v:h" opt
 do
         case ${opt} in
                 o) OPTION=$OPTARG ;;
@@ -42,6 +44,7 @@ do
                 n) NewFolderName=$OPTARG ;;
                 e) ExistingFilename=$OPTARG ;;
                 b) StorageEndpoint=$OPTARG ;;
+                v) FileVersion=$OPTARG ;;
                 h) usage ;;
         esac
 done
@@ -117,7 +120,9 @@ CreateFolder ()
 CreateFolderSP ()
 {
   SYNCPOINT_ID=$(GetSyncpointID)
-  VirtualPath="$(GetFoldersFromSyncpoint | jq ".[] | select(.Name==\"$FolderName\")" | grep VirtualPath | cut -d ':' -f2 | tr -d '", ')$NewFolderName$(echo -n '\\')"
+  #VirtualPath="$(GetFoldersFromSyncpoint | jq ".[] | select(.Name==\"$FolderName\")" | grep VirtualPath | cut -d ':' -f2 | tr -d '", ')$NewFolderName$(echo -n '\\')"
+  #\"ParentFolderId\": 407528119878001,
+  VirtualPath="$(echo -n '\')$NewFolderName$(echo -n '\')"
   curl -v -sS -X POST --header "Content-Type: " --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" -d "[ {\"SyncpointId\": \"$SYNCPOINT_ID\", \"Name\": \"$NewFolderName\", \"Status\": 1, \"VirtualPath\": \"$VirtualPath\"} ]" "https://api.syncplicity.com/sync/folders.svc/$SYNCPOINT_ID/folders" | python -m json.tool
 }
 
@@ -141,6 +146,22 @@ GetStorageEndpoints ()
 GetStorageEndpoint ()
 {
   curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/storage/storageendpoint.svc/$(GetStorageEndpoints | jq ".[] | select(.Description==\"$StorageEndpoint\")" | grep -iw "id" | cut -d ':' -f2 | tr -d '", ')" | python -m json.tool
+}
+
+DeleteFileVersion ()
+{
+  FileVersionID=$(GetFileVersions | jq .[$FileVersion].Id)
+  curl -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/version.svc/$(GetSyncpointID)/file/$(GetFilesFromFolder | jq ".[] | select(.Filename==\"$ExistingFilename\")" | grep -iw "FileId" | cut -d ':' -f2 | tr -d '", ')/version/$FileVersionID"
+}
+
+CreateSyncpoint ()
+{
+  curl -X POST --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "[ {\"Type\": 6, \"Name\": \"$NewFolderName\", \"Mapped\": false, \"DownloadEnabled\": false, \"UploadEnabled\": false, \"StorageEndpointID\": \"$(GetDefaultStorage | jq .Id | tr -d '" ')\"} ]" "https://api.syncplicity.com/syncpoint/syncpoints.svc/" | python -m json.tool
+}
+
+DeleteSyncpoint ()
+{
+  curl -X DELETE --header "As-User: " -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Accept: application/json" --header "Content-Type: " "https://api.syncplicity.com/syncpoint/syncpoint.svc/$(GetSyncpointID)"
 }
 
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
@@ -167,6 +188,12 @@ elif [[ $OPTION = 'get-storage-endpoints' ]]; then
   GetStorageEndpoints
 elif [[ $OPTION = 'get-storage-endpoint' ]]; then
   GetStorageEndpoint
+elif [[ $OPTION = 'delete-file-version' ]]; then
+  DeleteFileVersion
+elif [[ $OPTION = 'create-syncpoint' ]]; then
+  CreateSyncpoint
+elif [[ $OPTION = 'delete-syncpoint' ]]; then
+  DeleteSyncpoint
 else
   usage
 fi
