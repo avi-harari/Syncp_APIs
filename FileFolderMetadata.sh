@@ -13,10 +13,16 @@ function usage () {
         echo "get-files - Get files from folder. Requires syncpoint and folder."
         echo "delete-folder - Delete folder. Requires syncpoint and folder."
         echo "create-folder - Create folder. Requires syncpoint, folder and new folder name."
+        echo "get-default-storage - Get default storage vault."
+        echo "get-storage-endpoint - Get a certain storage endpoint. Requires storage endpoint description (-b)."
+        echo "get-storage-endpoints - Get all storage endpoints."
+        echo "get-file-versions - Get all versions of a file. Requires existing filename (-e), syncpoint and folder name."
         echo
         echo "-f - Folder name. If folder name has spaces it must be inside double quotes."
         echo "-s - Syncpoint name. If syncpoint name has spaces it must be inside double quotes."
         echo "-n - New folder name. If folder name has spaces it must be inside double quotes. Only used with create-folder option."
+        echo "-e - Existing Filename."
+        echo "-b - Storage Endpoint Description. Only used for get-storage-endpoint."
         echo
         echo "Examples:"
         echo "./FileFolderMetadata.sh -o get-syncpoints"
@@ -35,7 +41,7 @@ do
                 s) Syncpoint=$OPTARG ;;
                 n) NewFolderName=$OPTARG ;;
                 e) ExistingFilename=$OPTARG ;;
-                v) VirtualPath=$OPTARG ;;
+                b) StorageEndpoint=$OPTARG ;;
                 h) usage ;;
         esac
 done
@@ -132,6 +138,11 @@ GetStorageEndpoints ()
   curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" "https://api.syncplicity.com/storage/storageendpoints.svc/" | python -m json.tool
 }
 
+GetStorageEndpoint ()
+{
+  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/storage/storageendpoint.svc/$(GetStorageEndpoints | jq ".[] | select(.Description==\"$StorageEndpoint\")" | grep -iw "id" | cut -d ':' -f2 | tr -d '", ')" | python -m json.tool
+}
+
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
 
 if [[ $OPTION = 'get-syncpoints' ]]; then
@@ -154,6 +165,8 @@ elif [[ $OPTION = 'get-file-versions' ]]; then
   GetFileVersions
 elif [[ $OPTION = 'get-storage-endpoints' ]]; then
   GetStorageEndpoints
+elif [[ $OPTION = 'get-storage-endpoint' ]]; then
+  GetStorageEndpoint
 else
   usage
 fi
