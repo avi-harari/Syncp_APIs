@@ -122,8 +122,8 @@ CreateFolderSP ()
   SYNCPOINT_ID=$(GetSyncpointID)
   #VirtualPath="$(GetFoldersFromSyncpoint | jq ".[] | select(.Name==\"$FolderName\")" | grep VirtualPath | cut -d ':' -f2 | tr -d '", ')$NewFolderName$(echo -n '\\')"
   #\"ParentFolderId\": 407528119878001,
-  VirtualPath="$(echo -n '\')$NewFolderName$(echo -n '\')"
-  curl -v -sS -X POST --header "Content-Type: " --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" -d "[ {\"SyncpointId\": \"$SYNCPOINT_ID\", \"Name\": \"$NewFolderName\", \"Status\": 1, \"VirtualPath\": \"$VirtualPath\"} ]" "https://api.syncplicity.com/sync/folders.svc/$SYNCPOINT_ID/folders" | python -m json.tool
+  VirtualPath="$(echo -n '\\')$NewFolderName$(echo -n '\\')"
+  curl -v -sS -X POST --header "Content-Type: application/json" --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" -d "[ {\"SyncpointId\": \"$SYNCPOINT_ID\", \"Name\": \"$NewFolderName\", \"Status\": 1, \"VirtualPath\": \"$VirtualPath\"} ]" "https://api.syncplicity.com/sync/folders.svc/$SYNCPOINT_ID/folders" | python -m json.tool
 }
 
 GetDefaultStorage ()
