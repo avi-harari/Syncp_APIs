@@ -2,7 +2,7 @@
 
 function usage () {
         echo
-        echo "Usage: ./FileFolderMetadata.sh -o [Option] -f [\"Folder Name\"] -s [\"Syncpoint Name\"] -n [\"New Folder Name\"] -e [\"Existing Filename\"] -b [\"Storage Endpoint Description\"] -v [\"File version\"]"
+        echo "Usage: ./FileFolderMetadata.sh -o [Option] -f [\"Folder Name\"] -s [\"Syncpoint Name\"] -n [\"New Folder Name\"] -e [\"Existing Filename\"] -b [\"Storage Endpoint Description\"] -v [\"File version\"] -p [0/1/3]"
         echo
         echo "Options:"
         echo "-o - options are:"
@@ -19,6 +19,10 @@ function usage () {
         echo "get-file-versions - Get all versions of a file. Requires existing filename (-e), syncpoint and folder name."
         echo "delete-file-version - Delete a certain version of a file."
         echo "get-sp-participants - Show participants in syncpoint."
+        echo "remove-sp-participant - Remove single user from syncpoint. Only using email address, no group option."
+        echo "add-sp-participant - Add user to syncpoint. Permission is optional. Default is read-only."
+        echo "edit-sp-participant - Edit existing participant. Change permission level."
+        echo "remove-sp-participants - Remove users or groups from syncpoint."
         echo
         echo "-f - Folder name. If folder name has spaces it must be inside double quotes."
         echo "-s - Syncpoint name. If syncpoint name has spaces it must be inside double quotes."
@@ -26,6 +30,7 @@ function usage () {
         echo "-e - Existing Filename."
         echo "-b - Storage Endpoint Description. Only used for get-storage-endpoint."
         echo "-v - File version. 0 is first version. Only used for delete-file-version."
+        echo "-p - Permission. Used for syncpoint sharing participants. 0 means no share, 1 means read/write and 3 is read-only."
         echo
         echo "Examples:"
         echo "./FileFolderMetadata.sh -o get-syncpoints"
@@ -36,7 +41,9 @@ function usage () {
 
 }
 
-while getopts "o:u:f:s:n:e:b:v:h" opt
+Permission=3
+
+while getopts "o:u:f:s:n:e:b:v:p:h" opt
 do
         case ${opt} in
                 o) OPTION=$OPTARG ;;
@@ -47,6 +54,7 @@ do
                 e) ExistingFilename=$OPTARG ;;
                 b) StorageEndpoint=$OPTARG ;;
                 v) FileVersion=$OPTARG ;;
+                p) Permission=$OPTARG ;;
                 h) usage ;;
         esac
 done
@@ -122,7 +130,6 @@ CreateFolder ()
 CreateFolderSP ()
 {
   SYNCPOINT_ID=$(GetSyncpointID)
-  #VirtualPath="$(GetFoldersFromSyncpoint | jq ".[] | select(.Name==\"$FolderName\")" | grep VirtualPath | cut -d ':' -f2 | tr -d '", ')$NewFolderName$(echo -n '\\')"
   #\"ParentFolderId\": 407528119878001,
   VirtualPath="$(echo -n '\\')$NewFolderName$(echo -n '\\')"
   curl -v -sS -X POST --header "Content-Type: application/json" --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" -d "[ {\"SyncpointId\": \"$SYNCPOINT_ID\", \"Name\": \"$NewFolderName\", \"Status\": 1, \"VirtualPath\": \"$VirtualPath\"} ]" "https://api.syncplicity.com/sync/folders.svc/$SYNCPOINT_ID/folders" | python -m json.tool
@@ -168,7 +175,29 @@ DeleteSyncpoint ()
 
 GetSyncpointParticipants ()
 {
-  curl -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants" | python -m json.tool
+  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants" | python -m json.tool
+}
+
+DeleteSyncpointParticipant ()
+{
+  curl -X DELETE --header "Accept: " -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" "https://api.syncplicity.com/syncpoint/syncpoint_participant.svc/$(GetSyncpointID)/participant/$USER"
+}
+
+AddSyncpointParticipant ()
+{
+#add group
+  curl -sS -X POST --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "[ {\"User\": {\"EmailAddress\": \"$USER\"}, \"Permission\": \"$Permission\", \"SharingInviteNote\": \"\"} ]" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants" | python -m json.tool
+}
+#\"Group\": \"\",
+
+EditSyncpointParticipant ()
+{
+  curl -sS -X PUT --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Content-Type: application/json" -d "{\"User\": {\"EmailAddress\": \"$USER\"}, \"Permission\": \"$Permission\", \"SharingInviteNote\": \"\"}" "https://api.syncplicity.com/syncpoint/syncpoint_participant.svc/$(GetSyncpointID)/participant/$USER" | python -m json.tool
+}
+
+DeleteSyncpointParticipants ()
+{
+  curl -v -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "{\"User\": {\"EmailAddress\": \"$USER\"}, \"Group\": {\"Id\": \"\"}}" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants"
 }
 
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
@@ -203,6 +232,14 @@ elif [[ $OPTION = 'delete-syncpoint' ]]; then
   DeleteSyncpoint
 elif [[ $OPTION = 'get-sp-participants' ]]; then
   GetSyncpointParticipants
+elif [[ $OPTION = 'remove-sp-participant' ]]; then
+  DeleteSyncpointParticipant
+elif [[ $OPTION = 'add-sp-participant' ]]; then
+  AddSyncpointParticipant
+elif [[ $OPTION = 'edit-sp-participant' ]]; then
+  EditSyncpointParticipant
+elif [[ $OPTION = 'remove-sp-participants' ]]; then
+  DeleteSyncpointParticipants
 else
   echo -e "\n${RED}No such option!${NC} " && usage
 fi
