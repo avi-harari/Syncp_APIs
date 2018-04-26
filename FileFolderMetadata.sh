@@ -2,7 +2,7 @@
 
 function usage () {
         echo
-        echo "Usage: ./FileFolderMetadata.sh -o [Option] -f [\"Folder Name\"] -s [\"Syncpoint Name\"]"
+        echo "Usage: ./FileFolderMetadata.sh -o [Option] -f [\"Folder Name\"] -s [\"Syncpoint Name\"] -n [\"New Folder Name\"] -e [\"Existing Filename\"] -b [\"Storage Endpoint Description\"] -v [\"File version\"]"
         echo
         echo "Options:"
         echo "-o - options are:"
@@ -30,6 +30,7 @@ function usage () {
         echo "Examples:"
         echo "./FileFolderMetadata.sh -o get-syncpoints"
         echo "./FileFolderMetadata.sh -o get-files -s \"Syncpoint Name\" -f \"Folder Name\""
+        echo
         exit 2
 
 
@@ -203,5 +204,5 @@ elif [[ $OPTION = 'delete-syncpoint' ]]; then
 elif [[ $OPTION = 'get-sp-participants' ]]; then
   GetSyncpointParticipants
 else
-  usage
+  echo -e "\n${RED}No such option!${NC} " && usage
 fi
