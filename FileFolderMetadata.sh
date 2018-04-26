@@ -18,6 +18,7 @@ function usage () {
         echo "get-storage-endpoints - Get all storage endpoints."
         echo "get-file-versions - Get all versions of a file. Requires existing filename (-e), syncpoint and folder name."
         echo "delete-file-version - Delete a certain version of a file."
+        echo "get-sp-participants - Show participants in syncpoint."
         echo
         echo "-f - Folder name. If folder name has spaces it must be inside double quotes."
         echo "-s - Syncpoint name. If syncpoint name has spaces it must be inside double quotes."
@@ -164,6 +165,11 @@ DeleteSyncpoint ()
   curl -X DELETE --header "As-User: " -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Accept: application/json" --header "Content-Type: " "https://api.syncplicity.com/syncpoint/syncpoint.svc/$(GetSyncpointID)"
 }
 
+GetSyncpointParticipants ()
+{
+  curl -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants" | python -m json.tool
+}
+
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
 
 if [[ $OPTION = 'get-syncpoints' ]]; then
@@ -194,6 +200,8 @@ elif [[ $OPTION = 'create-syncpoint' ]]; then
   CreateSyncpoint
 elif [[ $OPTION = 'delete-syncpoint' ]]; then
   DeleteSyncpoint
+elif [[ $OPTION = 'get-sp-participants' ]]; then
+  GetSyncpointParticipants
 else
   usage
 fi
