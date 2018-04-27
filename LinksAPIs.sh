@@ -71,6 +71,21 @@ oauthresult=$(curl -sS -X POST https://api.syncplicity.com/oauth/token -H 'Autho
 accesstoken=$(echo ${oauthresult} | sed -e 's/[{}"]/''/g' | awk -v RS=',' -F: '/^access_token/ {print $2}')
 companyID=$(echo ${oauthresult} | sed -e 's/[{}"]/''/g' | awk -v RS=',' -F: '/^user_company_id/ {print $2}')
 
+VerifySyncpoint ()
+{
+  if [[ -z $Syncpoint ]] ; then
+    echo "Missing Syncpoit!" && usage
+  fi
+}
+
+VerifyUserOrGroup ()
+{
+  if [[ ! -z $Group ]] && [[ ! -z $USER ]] ; then
+    echo "Cannot use both user and group, enter only one of the two!" && usage
+  elif [[ -z $Group ]] && [[ -z $USER ]] ; then
+    echo "No user or group entered!" && usage
+  fi
+}
 
 GetAllLinks ()
 {
@@ -79,16 +94,20 @@ GetAllLinks ()
 
 GetSyncpointID ()
 {
+  VerifySyncpoint
   ./FileFolderMetadata.sh -o get-syncpoints -s $Syncpoint | jq '.[] | "\(.Id) \(.Name)"' | tr -d '"' | grep -iw "$Syncpoint" | awk '{print $1}' 
 }
 
 GetGroupID ()
 {
+  VerifyUserOrGroup
   ./GroupAPIs.sh -o get-all-groups | jq ".[] | select(.Name==\"$Group\")" | jq .Id | tr -d '" '
 }
 
 GetVirtualPath ()
 {
+  VerifySyncpoint
+  if [[ -z $Folder ]] || [[ -z $File ]] ; then echo "Missing file or folder name!" && usage ; fi
   ./FileFolderMetadata.sh -o get-folders -s "$Syncpoint" | jq ".[] | select(.Name==\"$Folder\")" | grep -iw "VirtualPath" | cut -d ':' -f2 | tr -d '", '
 }
 
@@ -105,6 +124,7 @@ UserOrGroup ()
 
 GetUserID ()
 {
+  VerifyUserOrGroup
   ./UserAPIs.sh -o show-user -u $USER | jq .Id | tr -d '" '
 }
 
@@ -114,15 +134,6 @@ JQUserOrGroup ()
     echo -n '(.Groups[].Name=="'$Group'")'
   elif [[ -z $Group ]] && [[ ! -z $USER ]] ; then
     echo -n '(.Users[].Id=="'$(GetUserID)'")'
-  fi
-}
-
-VerifyUserOrGroup ()
-{
-  if [[ ! -z $Group ]] && [[ ! -z $USER ]] ; then
-    echo "Cannot use both user and group, enter only one of the two!" && usage
-  elif [[ -z $Group ]] && [[ -z $USER ]] ; then
-    echo "No user or group entered!" && usage
   fi
 }
 
