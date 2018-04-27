@@ -188,7 +188,6 @@ AddSyncpointParticipant ()
 #add group
   curl -sS -X POST --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "[ {\"User\": {\"EmailAddress\": \"$USER\"}, \"Permission\": \"$Permission\", \"SharingInviteNote\": \"\"} ]" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants" | python -m json.tool
 }
-#\"Group\": \"\",
 
 EditSyncpointParticipant ()
 {
@@ -197,7 +196,7 @@ EditSyncpointParticipant ()
 
 DeleteSyncpointParticipants ()
 {
-  curl -v -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "{\"User\": {\"EmailAddress\": \"$USER\"}, \"Group\": {\"Id\": \"\"}}" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants"
+  curl -v -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "[ {\"User\": {\"EmailAddress\": \"$USER\"}} ]" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants"
 }
 
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
