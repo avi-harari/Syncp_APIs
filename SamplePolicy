@@ -1,0 +1,359 @@
+[ {
+    "EntitySetType": {}, 
+    "Priority": ,
+    "Groups": [], 
+    "IsDefault": false, 
+    "Name": "", 
+    "Policy": {
+        "AdminIpRestriction": {
+            "AllowedIPs": "", 
+            "Message": "You are attempting to perform an admin action from an IP address that your company has not approved."
+        }, 
+        "AdminIpRestrictionPolicy": 1, 
+        "AdminPasswordComplexity": {
+            "AdminPasswordComplexityMaximumLength": 15, 
+            "AdminPasswordComplexityMinimumLength": 8, 
+            "AdminPasswordComplexityOptions": 39
+        }, 
+        "AdminPasswordComplexityPolicy": 1, 
+        "AffiliatePolicy": {
+            "IncomingDomainsWhiteList": [], 
+            "OutgoingAffiliateDomainsRestrictions": {}, 
+            "OutgoingAffiliateDomainsWhiteList": [], 
+            "OutgoingExternalDomainsWhiteList": []
+        }, 
+        "BandwidthRestrictionDownloadPolicy": 1, 
+        "BandwidthRestrictionDownloadSize": 1, 
+        "BandwidthRestrictionPolicy": 1, 
+        "BandwidthRestrictionUploadPolicy": 1, 
+        "BandwidthRestrictionUploadSize": 1, 
+        "BranchingPolicy": 2, 
+        "ClientAutoUpdatePolicy": 3, 
+        "ClientPreconfiguredPolicy": 2, 
+        "ClientUpdateGlobalOverridePolicy": 1, 
+        "DesktopShareLinkFlowPolicy": 2, 
+        "DlpSettings": {
+            "Enabled": false, 
+            "ScanAllFileExtensions": true, 
+            "ScanAllFileSizes": true
+        }, 
+        "EnforceClientMemberActiveDirectoryPolicy": 1, 
+        "EnforceClientMemberActiveDirectoryPolicyDomains": "", 
+        "ExclusionTypes": [
+            {
+                "Extension": "accdb"
+            }, 
+            {
+                "Extension": "accde"
+            }, 
+            {
+                "Extension": "accdr"
+            }, 
+            {
+                "Extension": "accdt"
+            }, 
+            {
+                "Extension": "bak"
+            }, 
+            {
+                "Extension": "csproj"
+            }, 
+            {
+                "Extension": "dbf"
+            }, 
+            {
+                "Extension": "des"
+            }, 
+            {
+                "Extension": "lck"
+            }, 
+            {
+                "Extension": "nd"
+            }, 
+            {
+                "Extension": "nsf"
+            }, 
+            {
+                "Extension": "oab"
+            }, 
+            {
+                "Extension": "olk"
+            }, 
+            {
+                "Extension": "one"
+            }, 
+            {
+                "Extension": "ost"
+            }, 
+            {
+                "Extension": "ostx"
+            }, 
+            {
+                "Extension": "pdb"
+            }, 
+            {
+                "Extension": "pst"
+            }, 
+            {
+                "Extension": "pstx"
+            }, 
+            {
+                "Extension": "qba"
+            }, 
+            {
+                "Extension": "qbi"
+            }, 
+            {
+                "Extension": "qbr"
+            }, 
+            {
+                "Extension": "qbw"
+            }, 
+            {
+                "Extension": "qby"
+            }, 
+            {
+                "Extension": "qdt"
+            }, 
+            {
+                "Extension": "sln"
+            }, 
+            {
+                "Extension": "suo"
+            }, 
+            {
+                "Extension": "tlg"
+            }, 
+            {
+                "Extension": "tmp"
+            }, 
+            {
+                "Extension": "use"
+            }, 
+            {
+                "Extension": "vdi"
+            }, 
+            {
+                "Extension": "vhd"
+            }, 
+            {
+                "Extension": "vmc"
+            }, 
+            {
+                "Extension": "vmdk"
+            }, 
+            {
+                "Extension": "vmem"
+            }, 
+            {
+                "Extension": "vmss"
+            }, 
+            {
+                "Extension": "vpcbackup"
+            }, 
+            {
+                "Extension": "vsv"
+            }, 
+            {
+                "Extension": "vud"
+            }
+        ], 
+        "FileExclusionPolicy": 1, 
+        "FileTypeExclusionGlobalOverridePolicy": 1, 
+        "GeolocationPrivacyPolicy": 2, 
+        "IncludeOwnerInFolderNamePolicy": 1, 
+        "IncomingSharedFolderPolicy": 3, 
+        "IncomingSharedFolderPolicyData": {
+            "IsReadonlySharing": false
+        }, 
+        "InternalParticipantsPolicy": {}, 
+        "InternalSharingPolicy": {
+            "IncomingInternalSharingPolicy": 1, 
+            "IncomingInternalSharingPolicyData": {}, 
+            "OutgoingInternalSharingPolicy": 1, 
+            "OutgoingInternalSharingPolicyData": {}
+        }, 
+        "IrmPolicy": {}, 
+        "IsRestrictWebsiteAccessPolicyAlertEnabled": false, 
+        "MobileDataSyncLimit": {
+            "BillingCycleResetDay": 1, 
+            "TransferLimit": 1024
+        }, 
+        "MobileSyncLimitsPolicy": 1, 
+        "MobileSyncPolicy": 1, 
+        "MobileUnencryptedSyncPolicy": 2, 
+        "NetworkShareConnectorPolicy": 2, 
+        "NetworkShareConnectors": [], 
+        "OpenInPolicy": 1, 
+        "OutlookClientAutoUpdatePolicy": 3, 
+        "OutlookFileExclusionPolicy": 1, 
+        "OutlookFileExclusionValues": [
+            {
+                "Extension": "accdb"
+            }, 
+            {
+                "Extension": "accde"
+            }, 
+            {
+                "Extension": "accdr"
+            }, 
+            {
+                "Extension": "accdt"
+            }, 
+            {
+                "Extension": "bak"
+            }, 
+            {
+                "Extension": "csproj"
+            }, 
+            {
+                "Extension": "dbf"
+            }, 
+            {
+                "Extension": "des"
+            }, 
+            {
+                "Extension": "lck"
+            }, 
+            {
+                "Extension": "nd"
+            }, 
+            {
+                "Extension": "nsf"
+            }, 
+            {
+                "Extension": "oab"
+            }, 
+            {
+                "Extension": "olk"
+            }, 
+            {
+                "Extension": "one"
+            }, 
+            {
+                "Extension": "ost"
+            }, 
+            {
+                "Extension": "ostx"
+            }, 
+            {
+                "Extension": "pdb"
+            }, 
+            {
+                "Extension": "pst"
+            }, 
+            {
+                "Extension": "pstx"
+            }, 
+            {
+                "Extension": "qba"
+            }, 
+            {
+                "Extension": "qbi"
+            }, 
+            {
+                "Extension": "qbr"
+            }, 
+            {
+                "Extension": "qbw"
+            }, 
+            {
+                "Extension": "qby"
+            }, 
+            {
+                "Extension": "qdt"
+            }, 
+            {
+                "Extension": "sln"
+            }, 
+            {
+                "Extension": "suo"
+            }, 
+            {
+                "Extension": "tlg"
+            }, 
+            {
+                "Extension": "tmp"
+            }, 
+            {
+                "Extension": "use"
+            }, 
+            {
+                "Extension": "vdi"
+            }, 
+            {
+                "Extension": "vhd"
+            }, 
+            {
+                "Extension": "vmc"
+            }, 
+            {
+                "Extension": "vmdk"
+            }, 
+            {
+                "Extension": "vmem"
+            }, 
+            {
+                "Extension": "vmss"
+            }, 
+            {
+                "Extension": "vpcbackup"
+            }, 
+            {
+                "Extension": "vsv"
+            }, 
+            {
+                "Extension": "vud"
+            }
+        ], 
+        "OutlookFileSizePolicy": 1, 
+        "OutlookFileSizeValue": 0, 
+        "OutlookIntegrationPolicy": 2, 
+        "OutlookShareLinkPasswordComplexity": 1, 
+        "OutlookShareLinkPasswordLength": 6, 
+        "OutlookSharedLinkAccessPolicy": 3, 
+        "OutlookSharedLinkExpirationDays": 6, 
+        "OutlookSharedLinkExpirationPolicy": 2, 
+        "OutlookSharedLinkPasswordProtectionPolicy": 1, 
+        "PasscodeEnforcementPolicy": 1, 
+        "PasscodeFailurePolicy": 1, 
+        "PasscodeFailures": {
+            "AllowablePasscodeFailures": 10
+        }, 
+        "PasscodeTimeout": {
+            "PasscodeValidityTime": 30
+        }, 
+        "PasscodeTimeoutPolicy": 1, 
+        "RemoteWipeEndpointPolicy": 2, 
+        "RemoteWipeSyncpointPolicy": 2, 
+        "RemoteWipeUsersPolicy": 2, 
+        "ReportExportOutputFolderPolicy": 1, 
+        "RestrictMobileAccessPolicy": 1, 
+        "RestrictWebsiteAccessPolicy": 1, 
+        "RestrictWebsiteAccessPolicyAlertMessage": "", 
+        "ShareLinkExpirationPolicy": 1, 
+        "ShareLinkExpireInDays": 30, 
+        "ShareLinkPasswordComplexity": 1, 
+        "ShareLinkPasswordLength": 6, 
+        "ShareLinkPasswordProtectedPolicy": 2, 
+        "ShareLinkPolicy": 2, 
+        "SharePointConnectorPolicy": 2, 
+        "SharePointConnectors": [], 
+        "ShareableLinkPolicy": 2, 
+        "SharedFolderPolicy": 4, 
+        "SharedFolderResharingPolicy": 3, 
+        "SharedLinkAccessGlobalOverridePolicy": 1, 
+        "SharedLinkExpirationGlobalOverridePolicy": 1, 
+        "SharedLinkPasswordProtectionGlobalOverridePolicy": 1, 
+        "SilentOnboardDefaultLocationPolicy": 1, 
+        "SilentOnboardDisplayCustomFolderScreenPolicy": 1, 
+        "SilentOnboardDisplayMachineScreenPolicy": 1, 
+        "SilentOnboardDisplayTutorialScreensPolicy": 1, 
+        "SilentOnboardMacDefaultLocationPolicy": 1, 
+        "SilentOnboardMacDefaultLocationValue": "$HOME", 
+        "SilentOnboardPolicy": 1, 
+        "SilentOnboardWinDefaultLocationPolicy": 1, 
+        "SilentOnboardWinDefaultLocationValue": "%USERPROFILE%", 
+        "WopiPolicy": 1
+    }, 
+} ]
