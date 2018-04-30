@@ -31,6 +31,7 @@ function usage () {
         echo "-b - Storage Endpoint Description. Only used for get-storage-endpoint."
         echo "-v - File version. 0 is first version. Only used for delete-file-version."
         echo "-p - Permission. Used for syncpoint sharing participants. 0 means no share, 1 means read/write and 3 is read-only."
+        echo "-r - Remove status for file. 3 is to remove, 5 is to confirm removed (remove option to restore file). Default is 3."
         echo
         echo "Examples:"
         echo "./FileFolderMetadata.sh -o get-syncpoints"
@@ -42,8 +43,9 @@ function usage () {
 }
 
 Permission=3
+RemoveStatus=3
 
-while getopts "o:u:f:s:n:e:b:v:p:h" opt
+while getopts "o:u:f:s:n:e:b:v:p:r:h" opt
 do
         case ${opt} in
                 o) OPTION=$OPTARG ;;
@@ -55,6 +57,7 @@ do
                 b) StorageEndpoint=$OPTARG ;;
                 v) FileVersion=$OPTARG ;;
                 p) Permission=$OPTARG ;;
+                r) RemoveStatus=$OPTARG ;;
                 h) usage ;;
         esac
 done
@@ -77,7 +80,7 @@ NC='\033[0m'
 #Get All Syncpoints
 GetAllSyncpoints ()
 {
-  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/syncpoint/syncpoints.svc/" | python -m json.tool
+  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/syncpoint/syncpoints.svc/?includeType=1,2,3,4,5,6,7,8" | python -m json.tool
 }
 
 #Get Syncpoint ID
@@ -109,6 +112,11 @@ GetFolderID ()
 GetFilesFromFolder ()
 {
   curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/folder_files.svc/$(GetSyncpointID)/folder/$FolderID/files" | python -m json.tool
+}
+
+GetFileID ()
+{
+  GetFilesFromFolder | jq ".[] | select(.Filename==\"$ExistingFilename\")" | grep LatestVersionId | cut -d ':' -f2 | tr -d '", '
 }
 
 GetSubFoldersFromFolder ()
@@ -143,8 +151,8 @@ GetDefaultStorage ()
 
 GetFileVersions ()
 {
-  FILE_VERSION_ID=$(GetFilesFromFolder | jq ".[] | select(.Filename==\"$ExistingFilename\")" | grep LatestVersionId | cut -d ':' -f2 | tr -d '", ')
-  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/versions.svc/$(GetSyncpointID)/file/$FILE_VERSION_ID/versions" | python -m json.tool
+  #FILE_VERSION_ID=$(GetFilesFromFolder | jq ".[] | select(.Filename==\"$ExistingFilename\")" | grep LatestVersionId | cut -d ':' -f2 | tr -d '", ')
+  curl -sS -X GET --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/versions.svc/$(GetSyncpointID)/file/$(GetFileID)/versions" | python -m json.tool
 }
 
 GetStorageEndpoints ()
@@ -199,6 +207,19 @@ DeleteSyncpointParticipants ()
   curl -v -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " --header "Content-Type: application/json" -d "[ {\"User\": {\"EmailAddress\": \"$USER\"}} ]" "https://api.syncplicity.com/syncpoint/syncpoint_participants.svc/$(GetSyncpointID)/participants"
 }
 
+DeleteFileFromSyncpoint ()
+{
+  SYNCPOINT_ID=$(GetSyncpointID)
+  #VirtualPath="$(echo -n '\\')$FolderName$(echo -n '\\')"
+  VirtualPath="$(echo -n '\\')" #$ExistingFilename$(echo -n '\\')"
+  curl -v -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Content-Type: application/json" -d "[ {\"SyncpointId\": \"$SYNCPOINT_ID\", \"Filename\": \"$ExistingFilename\", \"Status\": $RemoveStatus, \"VirtualPath\": \"$VirtualPath\"} ]" "https://api.syncplicity.com/sync/files.svc/$SYNCPOINT_ID/files"
+}
+
+DeleteFile ()
+{
+  curl -X DELETE --header "Accept: application/json" -H "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "As-User: " "https://api.syncplicity.com/sync/file.svc/$(GetSyncpointID)/file/$(GetFileID)"
+}
+
 if [[ $FolderName = "/" ]] ; then FolderID=$(GetRootFolderID) ; else FolderID=$(GetFolderID) ; fi
 
 if [[ $OPTION = 'get-syncpoints' ]]; then
@@ -239,6 +260,10 @@ elif [[ $OPTION = 'edit-sp-participant' ]]; then
   EditSyncpointParticipant
 elif [[ $OPTION = 'remove-sp-participants' ]]; then
   DeleteSyncpointParticipants
+elif [[ $OPTION = 'delete-file-from-sp' ]]; then
+  DeleteFileFromSyncpoint
+elif [[ $OPTION = 'delete-file' ]]; then
+  DeleteFile
 else
   echo -e "\n${RED}No such option!${NC} " && usage
 fi
