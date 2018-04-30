@@ -126,6 +126,11 @@ GetCompany ()
   curl -sS -X GET --header "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Accept: application/json" "https://api.syncplicity.com/provisioning/company.svc/${companyID}" | python -m json.tool
 }
 
+GetDevices ()
+{
+  curl -sS -X GET --header "AppKey: ${appkey}" -H "Authorization: Bearer ${accesstoken}" --header "Accept: application/json" "https://api.syncplicity.com/provisioning/machines.svc/" | python -m json.tool
+}
+
 VerifyUser ()
 {
   if [[ -z $USER ]] ; then echo "Missing Username! This option is mandatory!" && usage ; fi
@@ -150,6 +155,8 @@ elif [[ $OPTION = 'edit-users' ]] ; then
   EditUsers
 elif [[ $OPTION = 'company-details' ]] ; then
   GetCompany
+elif [[ $OPTION = 'get-devices' ]] ; then
+  GetDevices
 else
   echo "Wrong Option!" && usage
 fi
