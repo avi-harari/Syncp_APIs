@@ -1,0 +1,54 @@
+{
+  "StorageQuotas": [
+    {
+      "StorageQuotaGb": 10,
+      "StorageEndpointId": "11111111-1111-1111-1111-111111111111",
+      "StorageEndpoint": {
+        "Version": 0,
+        "UserStoragePasswordStatus": 0,
+        "UserHasStoragePassword": false,
+        "Company": null,
+        "ConsumedGb": 0,
+        "Default": false,
+        "Id": "11111111-1111-1111-1111-111111111111",
+        "IrmRmsOption": 0,
+        "Name": "Syncplicity Cloud Storage US",
+        "RequiresStorageAuthentication": false,
+        "SizeGb": 0
+      }
+    }
+  ],
+  "PolicySets": [
+    {
+      "Priority": 1,
+      "Name": "Permissive",
+      "IsDefault": false,
+      "Id": "0363ad47-2a74-43bb-8fc0-cb60485719f6",
+      "EntitySetType": 1
+    },
+    {
+      "Priority": 4,
+      "Name": "Default Storage Set",
+      "IsDefault": true,
+      "Id": "5c1bea51-3167-4671-876f-4a42cbeafbae",
+      "EntitySetType": 2
+    }
+  ],
+  "PolicySet": {
+    "Priority": 1,
+    "Name": "Permissive",
+    "IsDefault": false,
+    "Id": "0363ad47-2a74-43bb-8fc0-cb60485719f6",
+    "EntitySetType": 1
+  },
+  "Owner": {
+    "LastName": "Harari",
+    "FirstName": "Avi",
+    "EmailAddress": "aharari-demo@axway.com"
+  },
+  "Name": "TestGroup2",
+  "Company": {
+    "Name": "Demo",
+    "Id": "21e6d7a7-e1ee-474c-967f-b792f5765971"
+  }
+}
