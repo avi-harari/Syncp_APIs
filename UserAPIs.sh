@@ -7,10 +7,10 @@ function usage () {
         echo "Options:"
         echo "-o - options are:"
         echo
-        echo "show-users - Show all users."
+        echo "get-users - Show all users."
         echo "create-user - Create new user. Must input username and type."
         echo "delete-user - Delete user."
-        echo "show-user - Show user details."
+        echo "get-user - Show user details."
         echo "edit-user - Edit single user. Enable/Disable user. Activate/Deactivate user. Change email (with -e), first or last name, password or role."
         echo "edit-users - Edit multiple users. Can't enable/disable or activate/deactivate. Can change account type."
         echo "company-details - Show company details."
@@ -141,13 +141,13 @@ VerifyType ()
   if [[ -z $Type ]] ; then echo "Missing Type! This option is mandatory!" && usage ; fi
 }
 
-if [[ $OPTION = 'show-users' ]] ; then
+if [[ $OPTION = 'get-users' ]] ; then
   GetAllUsers
 elif [[ $OPTION = 'create-user' ]] ; then
   CreateUser
 elif [[ $OPTION = 'delete-user' ]] ; then
   DeleteUser
-elif [[ $OPTION = 'show-user' ]] ; then
+elif [[ $OPTION = 'get-user' ]] ; then
   GetUser
 elif [[ $OPTION = 'edit-user' ]] ; then
   EditUser
