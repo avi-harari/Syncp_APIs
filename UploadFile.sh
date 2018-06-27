@@ -5,9 +5,9 @@ function usage () {
         echo "Usage: ./UploadFile.sh -f \"File Name\" -s \"Syncpoint Name\" -l \"Folder Name\""
         echo
         echo
-        echo "-f - First Name. If the name has spaces it must be inside double quotes."
-        echo "-l - Last Name. If the name has spaces it must be inside double quotes."
-        echo "-t - Type of account. Account types are:"
+        echo "-f - File Name. If the name has spaces it must be inside double quotes."
+        echo "-s - Syncpoint Name. If the name has spaces it must be inside double quotes."
+        echo "-l - Folder Name. If the name has spaces it must be inside double quotes."
         echo
         echo "Examples:"
         echo "./UploadFile.sh -f \"File Name\" -s \"Syncpoint Name\""
@@ -30,11 +30,6 @@ done
 if [[ -z $File ]] ; then echo "Please enter file!" && usage ; fi
 if [[ -z $Syncpoint ]] ; then echo "Please enter file!" && usage ; fi
 StorageID=$(./FileFolderMetadata.sh -o get-syncpoints | jq '.[] | "\(.Id) \(.Name)"' | tr -d '"' | grep -iw "$Syncpoint" | awk '{print $1}')
-#if [[ -z $Folder ]] ; then
-#  StorageID=$(./FileFolderMetadata.sh -o get-syncpoints | jq '.[] | "\(.Id) \(.Name)"' | tr -d '"' | grep -iw "$Syncpoint" | awk '{print $1}')
-#elif [[ ! -z $Folder ]] ; then
-#  StorageID=$(./FileFolderMetadata.sh -o get-folders | jq '.[] |"\(.FolderId) \(.Name)"' | tr -d '",' | grep -iw "$Folder" | awk '{print $1}')
-#fi
 
 if [[ ! -z $Folder ]] ; then
 #Get path
