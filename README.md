@@ -6,5 +6,7 @@ Credentials file in all scripts is /root/DemoAccount. In case you want to use a 
 The credentials file needs to look like the following:
 
 App Key:          "INSERT KEY HERE"
+
 App Secret:       "INSERT SECRET HERE"
+
 Application Token:"INSERT TOKEN HERE"
